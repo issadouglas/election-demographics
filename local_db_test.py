@@ -14,8 +14,8 @@ app = Flask(__name__)
 
 # make sure the database username, database password and
 # database name are correct
-username = 'isabel32_issa21'
-password = 'cuttlefish4ever'
+username = 'username'
+password = 'password'
 userpass = 'mysql+pymysql://' + username + ':' + password + '@'
 # keep this as is for a hosted website
 server  = 'isabellasdouglas.com'
