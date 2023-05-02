@@ -12,19 +12,13 @@ db = SQLAlchemy()
 # create the app
 app = Flask(__name__)
 
-# make sure the database username, database password and
-# database name are correct
-username = 'username'
-password = 'password'
-userpass = 'mysql+pymysql://' + username + ':' + password + '@'
-# keep this as is for a hosted website
-server  = 'isabellasdouglas.com'
-# CHANGE to YOUR database name, with a slash added as shown
-dbname   = '/isabel32_elections'
-# there is no socket
+import os
+# check for environment variable
+if not os.getenv("DATABASE_URL"):
+    raise RuntimeError("DATABASE_URL is not set")
 
-# put them all together as a string that shows SQLAlchemy where the database is
-app.config['SQLALCHEMY_DATABASE_URI'] = userpass + server + dbname
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY'] = 'coolbeans22'
 
