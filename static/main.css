@@ -47,3 +47,11 @@ body {
 .about-paragraph {
   min-width: 500px; /* adjust the value as needed */
 }
+
+@media only screen and (max-width: 480px) {
+  /* Add your Highcharts container selectors */
+  #container1, #container2, #container3, #container4 {
+    max-width: 100%; /* Set the max-width to 100% */
+    height: auto; /* Set the height to auto */
+  }
+}
