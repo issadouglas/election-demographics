@@ -1,0 +1,49 @@
+
+body {
+  background-color: #f6f6f6;
+}
+
+
+#container1, #container2, #container3, #container4{
+  height: 500px;
+  width:500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin:auto;
+}
+
+.datatable {
+  font-family: Verdana, sans-serif;
+  border-collapse: collapse;
+  border: 1px solid #ebebeb;
+  margin: 10px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+
+.datatable th {
+  font-weight: 600;
+  padding: 0.5em;
+}
+
+.datatable td,
+.datatable th,
+.datatable caption {
+  padding: 0.5em;
+}
+
+.datatable thead tr,
+.datatable tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.datatable tr:hover {
+  background: #f1f7ff;
+}
+
+.about-paragraph {
+  min-width: 500px; /* adjust the value as needed */
+}

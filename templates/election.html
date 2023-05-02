@@ -1,0 +1,353 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Selected County: {{ the_election.countyCode }}
+{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Election Results Comparison</title>
+    <!-- link to main.css -->
+    <link href="/static/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+  </head>
+
+  <body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Election Results Comparison</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              About
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <div class="about-paragraph">
+                  <p>Fresh Take Florida, a news service of the University of Florida College of Journalism and Communications, compiled Florida’s 2022 general election turnout figures to determine the counties and demographics among which Florida Democrats saw staggering losses, while Republicans racked up votes in traditionally blue-leaning counties. Democrats lost ground in 50 Florida counties, while the GOP lost ground in only two: Alachua and Leon. Some of Florida’s most populous, historically blue counties were flipped, like Miami-Dade and Palm Beach, which witnessed a respective 22% and 10% net growth in GOP voters.</p>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.wuft.org/news/category/fresh-take-florida/">Article</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-lg-6 mx-md-auto mx-lg-auto">
+
+    <!-- note, the variable the_XX was passed to the template
+         in the Flask route -->
+
+         <h1 class="mt-5 display-3 text-primary text-center">{{ the_election.countyCode }}</h1>
+
+
+        <h2 class="text-center">Did your county switch parties?</h2>
+
+        </div>
+
+        <div class="text-center">
+          <script>
+            const county = "{{ the_election.countyCode }}".toUpperCase();
+            const demCounties = ["GADSDEN", "LEON", "ALACHUA", "BROWARD", "ORANGE"];
+            const repCounties = ["DUVAL", "SEMINOLE", "OSCEOLA", "HILLSBOROUGH", "PINELLAS", "ST. LUCIE", "PALM BEACH", "BROWARD", "MIAMI-DADE"];
+
+            if (demCounties.includes(county)) {
+              document.write(`${county} stayed Democrat.`);
+            } else if (repCounties.includes(county)) {
+              document.write(`${county} switched to Republican.`);
+            } else {
+              document.write(`${county} stayed Republican.`);
+            }
+          </script>
+        </div>
+        </div>
+        </div>
+
+
+        <div class="container">
+          <div class="row">
+            <div class="col-md-8 col-lg-6 mx-md-auto mx-lg-auto">
+
+        <h2 class="pt-3 text-center">What does the data show?</h2>
+
+
+<div class="text-text-justify">
+
+      <p> The election data analysis showed that the Republican vote {{'experienced a growth' if ((the_election.rep22 - the_election.rep18)/the_election.rep18)*100 > 0 else 'experienced a decrease'}} of {{"{:.2f}".format(((the_election.rep22 - the_election.rep18)/the_election.rep18)*100)}}% while the Democratic vote {{'grew' if ((the_election.dem22 - the_election.dem18)/the_election.dem18)*100 > 0 else 'decreased'}} by {{"{:.2f}".format(((the_election.dem22 - the_election.dem18)/the_election.dem18)*100)}}%, and the net {{'growth' if ((the_election.rep22 - the_election.rep18)/the_election.rep18)*100 - ((the_election.dem22 - the_election.dem18)/the_election.dem18)*100 > 0 else 'decrease'}} of Republican votes over Democratic votes was {{"{:.2f}".format(((the_election.rep22 - the_election.rep18)/the_election.rep18)*100 - ((the_election.dem22 - the_election.dem18)/the_election.dem18)*100)}}%.</p>
+
+      <p>The data analysis from the 2022 elections indicated that the age group that voted the most compared to 2018 was {{'ages 45-64' if the_age.age3_22 > the_age.age1_22 and the_age.age3_22 > the_age.age2_22 and the_age.age3_22 > the_age.age4_22 else 'ages 25-44' if the_age.age2_22 > the_age.age3_22 and the_age.age2_22 > the_age.age1_22 and the_age.age2_22 > the_age.age4_22 else 'ages 65+' if the_age.age4_22 > the_age.age3_22 and the_age.age4_22 > the_age.age2_22 and the_age.age4_22 > the_age.age1_22 else 'ages 18-24'}}. Comparing each group individually:
+
+      {% if (the_age.age1_22 > the_age.age1_18) %}
+        Voters age 18-24 voted the most in 2022 by {{"{:.2f}".format((the_age.age1_22 - the_age.age1_18)/the_age.age1_18*100)}}% compared to 2018.
+      {% else %}
+        Voters age 18-24 voted the least in 2022 by {{"{:.2f}".format((the_age.age1_22 - the_age.age1_18)/the_age.age1_18*100)}}% compared to 2018.
+      {% endif %}
+      {% if (the_age.age2_22 > the_age.age2_18) %}
+        Voters age 25-44 voted the most in 2022 by {{"{:.2f}".format((the_age.age2_22 - the_age.age2_18)/the_age.age2_18*100)}}% compared to 2018.
+      {% else %}
+        Voters age 25-44 voted the least in 2022 by {{"{:.2f}".format((the_age.age2_22 - the_age.age2_18)/the_age.age2_18*100)}}% compared to 2018.
+      {% endif %}
+      {% if (the_age.age3_22 > the_age.age3_18) %}
+        Voters age 45-64 voted the most in 2022 by {{"{:.2f}".format((the_age.age3_22 - the_age.age3_18)/the_age.age3_18*100)}}% compared to 2018.
+      {% else %}
+        Voters age 45-64 voted the least in 2022 by {{"{:.2f}".format((the_age.age3_22 - the_age.age3_18)/the_age.age3_18*100)}}% compared to 2018.
+      {% endif %}
+      {% if (the_age.age4_22 > the_age.age4_18) %}
+        Voters age 65+ voted the most in 2022 by {{"{:.2f}".format((the_age.age4_22 - the_age.age4_18)/the_age.age4_18*100)}}% compared to 2018.
+      {% else %}
+        Voters age 65+ voted the least in 2022 by {{"{:.2f}".format((the_age.age4_22 - the_age.age4_18)/the_age.age4_18*100)}}% compared to 2018.
+      {% endif %}
+    </p>
+
+
+
+            <p>The female voters {{'increased' if the_gender.female_22 > the_gender.female_18 else 'decreased'}} by {{"{:.2f}".format((the_gender.female_22-the_gender.female_18)/the_gender.female_18*100)}}%, while the male voters {{'increased' if the_gender.male_22 > the_gender.male_18 else 'decreased'}} by {{"{:.2f}".format((the_gender.male_22-the_gender.male_18)/the_gender.male_18*100)}}% between 2018 and 2022.</p>
+
+            <p><p>The analysis of the 2022 elections data showed that {{'American Indian or Alaskan Native voters' if the_race.race1_22 > the_race.race2_22 and the_race.race1_22 > the_race.race3_22 and the_race.race1_22 > the_race.race4_22 and the_race.race1_22 > the_race.race5_22 else 'Asian or Pacific Islander voters' if the_race.race2_22 > the_race.race1_22 and the_race.race2_22 > the_race.race3_22 and the_race.race2_22 > the_race.race4_22 and the_race.race2_22 > the_race.race5_22 else 'Black, not Hispanic voters' if the_race.race3_22 > the_race.race1_22 and the_race.race3_22 > the_race.race2_22 and the_race.race3_22 > the_race.race4_22 and the_race.race3_22 > the_race.race5_22 else 'Hispanic voters' if the_race.race4_22 > the_race.race1_22 and the_race.race4_22 > the_race.race2_22 and the_race.race4_22 > the_race.race3_22 and the_race.race4_22 > the_race.race5_22 else 'White, not Hispanic voters' if the_race.race5_22 > the_race.race1_22 and the_race.race5_22 > the_race.race2_22 and the_race.race5_22 > the_race.race3_22 and the_race.race5_22 > the_race.race4_22 else 'the races'}} voted the most compared to 2018. Comparing each voting group individually:
+
+            {% if (the_race.race1_22 > the_race.race1_18) %}
+              Voters who are American Indian or Alaskan Native voters voted the most in 2022 by {{"{:.2f}".format((the_race.race1_22 - the_race.race1_18)/the_race.race1_18*100)}}% compared to 2018.
+            {% else %}
+              Voters who are American Indian or Alaskan Native voters voted the least in 2022 by {{"{:.2f}".format((the_race.race1_22 - the_race.race1_18)/the_race.race1_18*100)}}% compared to 2018.
+            {% endif %}
+
+            {% if (the_race.race2_22 > the_race.race2_18) %}
+              Voters who are Asian Or Pacific Islander voters voted the most in 2022 by {{"{:.2f}".format((the_race.race2_22 - the_race.race2_18)/the_race.race2_18*100)}}% compared to 2018.
+            {% else %}
+              Voters who are Asian or Pacific Islander voters voted the least in 2022 by {{"{:.2f}".format((the_race.race2_22 - the_race.race2_18)/the_race.race2_18*100)}}% compared to 2018.
+            {% endif %}
+
+            {% if (the_race.race3_22 > the_race.race3_18) %}
+              Voters who are Black, not Hispanic voters voted the most in 2022 by {{"{:.2f}".format((the_race.race3_22 - the_race.race3_18)/the_race.race3_18*100)}}% compared to 2018.
+            {% else %}
+              Voters who are Black, not Hispanic voters voted the least in 2022 by {{"{:.2f}".format((the_race.race3_22 - the_race.race3_18)/the_race.race3_18*100)}}% compared to 2018.
+            {% endif %}
+
+            {% if (the_race.race4_22 > the_race.race4_18) %}
+              Voters who are Hispanic voters voted the most in 2022 by {{"{:.2f}".format((the_race.race4_22 - the_race.race4_18)/the_race.race4_18*100)}}% compared to 2018.
+            {% else %}
+              Voters who are Hispanic voters voted the least in 2022 by {{"{:.2f}".format((the_race.race4_22 - the_race.race4_18)/the_race.race4_18*100)}}% compared to 2018.
+            {% endif %}
+
+            {% if (the_race.race5_22 > the_race.race5_18) %}
+              Voters who are White, not Hispanic voters voted the most in 2022 by {{"{:.2f}".format((the_race.race5_22 - the_race.race5_18)/the_race.race5_18*100)}}% compared to 2018.
+            {% else %}
+              Voters who are White, not Hispanic voters voted the least in 2022 by {{"{:.2f}".format((the_race.race5_22 - the_race.race5_18)/the_race.race5_18*100)}}% compared to 2018.
+            {% endif %}
+            </p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+            <div class="text-center">
+              <p><a href="{{ url_for('index') }}">Return to search page</a></p>
+            </div>
+
+
+    <!-- notice how the URL in the link above is rendered for Flask - it needs to
+         name the FUNCTION, not the route - and NOT the template!
+         -->
+
+
+
+  <figure class="highcharts-figure">
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div id="container1"></div>
+          <table id="datatable1" class="datatable">
+              <thead>
+                  <tr>
+                      <th></th>
+                      <th>2018</th>
+                      <th>2022</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                           <th>Total Voters</th>
+                           <td>{{ the_election.totalVoters18 }}</td>
+                           <td>{{ the_election.totalVoters22 }}</td>
+                       </tr>
+                       <tr>
+                           <th>Total Active Voters</th>
+                           <td>{{ the_election.totalActiveVoters18 }}</td>
+                           <td>{{ the_election.totalActiveVoters22 }}</td>
+                       </tr>
+                       <tr>
+                           <th>Registered Republicans</th>
+                           <td>{{ the_election.rep18 }}</td>
+                           <td>{{ the_election.rep22 }}</td>
+                       </tr>
+                       <tr>
+                           <th>Registered Democrats</th>
+                           <td>{{ the_election.dem18 }}</td>
+                           <td>{{ the_election.dem22 }}</td>
+                       </tr>
+                       <tr>
+                           <th>Registered NPA</th>
+                           <td>{{ the_election.npa18 }}</td>
+                           <td>{{ the_election.npa22 }}</td>
+                       </tr>
+                       <tr>
+                           <th>Registered Other</th>
+                           <td>{{ the_election.oth18 }}</td>
+                           <td>{{ the_election.oth22 }}</td>
+                       </tr>
+
+              </tbody>
+          </table>
+        </div>
+        <div class="swiper-slide">
+          <div id="container2"></div>
+          <table id="datatableage" class="datatable">
+        <thead>
+            <tr>
+                <th></th>
+                <th>2018</th>
+                <th>2022</th>
+            </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <th>Age Range 18-24</th>
+              <td>{{ the_age.age1_18 }}</td>
+              <td>{{ the_age.age1_22 }}</td>
+          </tr>
+          <tr>
+              <th>Age Range 25-44</th>
+              <td>{{ the_age.age2_18 }}</td>
+              <td>{{ the_age.age2_22 }}</td>
+          </tr>
+          <tr>
+              <th>Age Range 45-64</th>
+              <td>{{ the_age.age3_18 }}</td>
+              <td>{{ the_age.age3_22 }}</td>
+          </tr>
+          <tr>
+              <th>Age Range 65+</th>
+              <td>{{ the_age.age4_18 }}</td>
+              <td>{{ the_age.age4_22 }}</td>
+          </tr>
+        </tbody>
+    </table>
+        </div>
+        <div class="swiper-slide">
+          <div id="container3"></div>
+          <table id="datatablegender" class="datatable">
+
+
+              <thead>
+                  <tr>
+                      <th></th>
+                      <th>2018</th>
+                      <th>2022</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                    <th>Female</th>
+                    <td>{{ the_gender.female_18 }}</td>
+                    <td>{{ the_gender.female_22 }}</td>
+                </tr>
+                <tr>
+                    <th>Male</th>
+                    <td>{{ the_gender.male_18 }}</td>
+                    <td>{{ the_gender.male_22 }}</td>
+                </tr>
+                <tr>
+                    <th>Unknown</th>
+                    <td>{{ the_gender.unknown_18 }}</td>
+                    <td>{{ the_gender.unknown_22 }}</td>
+                </tr>
+              </tbody>
+          </table>
+          </div>
+        <div class="swiper-slide">
+          <div id="container4"></div>
+          <table id="datatablerace" class="datatable">
+              <thead>
+                  <tr>
+                      <th></th>
+                      <th>2018</th>
+                      <th>2022</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                    <th>American Indian or Alaskan Native</th>
+                    <td>{{ the_race.race1_18 }}</td>
+                    <td>{{ the_race.race1_22 }}</td>
+                </tr>
+                <tr>
+                    <th>Asian Or Pacific Islander</th>
+                    <td>{{ the_race.race2_18 }}</td>
+                    <td>{{ the_race.race2_22 }}</td>
+                </tr>
+                <tr>
+                    <th>Black, Not Hispanic</th>
+                    <td>{{ the_race.race3_18 }}</td>
+                    <td>{{ the_race.race3_22 }}</td>
+                </tr>
+                <tr>
+                    <th>Hispanic</th>
+                    <td>{{ the_race.race4_18 }}</td>
+                    <td>{{ the_race.race4_22 }}</td>
+                </tr>
+                <tr>
+                    <th>White, Not Hispanic</th>
+                    <td>{{ the_race.race5_18 }}</td>
+                    <td>{{ the_race.race5_22 }}</td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+
+
+<p class="pt-2 text-center"> *drag graphs left or right to view more*</p>
+
+<footer class="footer bg-light mt-auto py-3" style="bottom:0;width:100%;">
+  <div class="container-fluid d-flex justify-content-center">
+    <span class="text-muted">Copyright &copy; 2023
+      <a href="https://github.com/issadouglas">Isabella Douglas</a>
+    </span>
+  </div>
+</footer>
+
+
+  <script src="/static/main.js"></script>
+
+</body>
+</html>
+
+{% endblock %}

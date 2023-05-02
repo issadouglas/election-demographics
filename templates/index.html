@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+
+{% block title %}
+Election Comparison
+{% endblock %}
+
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Election Results Comparison</title>
+</head>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Election Results Comparison</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            About
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li>
+              <div class="about-paragraph">
+                <p>Fresh Take Florida, a news service of the University of Florida College of Journalism and Communications, compiled Florida’s 2022 general election turnout figures to determine the counties and demographics among which Florida Democrats saw staggering losses, while Republicans racked up votes in traditionally blue-leaning counties. Democrats lost ground in 50 Florida counties, while the GOP lost ground in only two: Alachua and Leon. Some of Florida’s most populous, historically blue counties were flipped, like Miami-Dade and Palm Beach, which witnessed a respective 22% and 10% net growth in GOP voters.</p>
+              </div>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://www.wuft.org/news/category/fresh-take-florida/">Article</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-md-12">
+
+      <h1 class="text-center mt-5 pt-5 display-3 text-primary">What is surprising about your county's election demographics?</h1>
+
+		<p class="lead text-center pt-2 pt-3 pb-1">Search to find out more about a certain county </p>
+
+		</div>
+	</div>
+
+		<div class="col-md-8 col-lg-6 mx-md-auto mx-lg-auto">
+			<div class="text-black p-4" style="border: 4px solid #0D6EFD;">
+
+			 {{ render_form(form, action=url_for("election_detail"), method="post") }}
+
+	   </div>
+    </div>
+  </div>
+
+<footer class="footer bg-light mt-auto py-3" style="position:absolute;bottom:0;width:100%;">
+  <div class="container-fluid d-flex justify-content-center">
+    <span class="text-muted">Copyright &copy; 2023
+      <a href="https://github.com/issadouglas">Isabella Douglas</a>
+    </span>
+  </div>
+</footer>
+
+</html>
+
+{% endblock %}
